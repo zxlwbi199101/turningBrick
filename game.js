@@ -347,8 +347,8 @@ game.prototype.beginRender = function () {
 	Turning.AnimationObject.update();
 
 	self.renderer.render( self.scene, self.camera );
-	setTimeout( self.beginRender, 100);
-	// requestAnimationFrame( self.beginRender )
+	// setTimeout( self.beginRender, 100);
+	requestAnimationFrame( self.beginRender )
 };
 
 

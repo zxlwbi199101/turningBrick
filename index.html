@@ -166,6 +166,7 @@
 				};
 			})( i );
 		};
+		console.log(levels.length);
 		for ( i = 0; i < levels.length - 1; i++ ) {
 			(function ( i ) {
 				levels[ i ].onclick = function ( evt ) {
@@ -179,6 +180,13 @@
 				};
 			})( i );
 		}
+
+		levels[ levels.length - 1 ].onclick = function ( evt ) {
+			if ( mainController.animating || levelController.animating ) return;
+			levelController.hide( 0 );
+			mainController.show( 300 );
+			evt.preventDefault();
+		};
 
 		function slideDown ( dom, delay, callback ) {
 			game.pause = true;

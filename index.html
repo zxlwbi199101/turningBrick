@@ -1,0 +1,234 @@
+<html>
+<head>
+	<title>Turning Box</title>
+	<style>
+		body { margin: 0; }
+		canvas { width: 100%; height: 100% }
+		.menu {
+			position: absolute;
+			height: 100%;
+			width: 300px;
+			margin-left: -150px;
+			left: 50%;
+			bottom: 100%;
+			background-color: rgba(100, 0, 36,0.3);
+		}
+
+		.menu a, .menu a:visited, .menu a:active {
+			line-height: 35px;
+			text-align: center;
+			vertical-align: middle;
+			text-decoration: none;
+			display: block;
+			margin: 15% auto;
+			width: 80%;
+			border: solid 2px rgb(227, 200, 0);
+			color: rgb(191, 90, 21);
+		}
+		.menu a:hover {
+			background-color: rgb(227, 200, 0);
+		}
+
+		#levelmenu .level, #levelmenu .level:visited, #levelmenu .level:active {
+			width: 35px;
+			float: left;
+			margin: 5% 0 5% 5%;
+		}
+		#prompt {
+			position: fixed;
+			text-align: center;
+			width: 100%;
+			height: 150px;
+			left: 100%;
+			top: 30%;
+			border-bottom:solid 2px rgb(227, 200, 0);
+			font-size: 50px;
+			color: rgb(227, 200, 0);
+		}
+	</style>
+</head>
+<body>
+
+<div id="prompt" style="p">LEVEL 1</div>
+<div id="menuContainer" style="">
+	<div id="mainmenu" class="menu">
+		<a href="">Start New Game</a>
+		<a href="">Choose Level</a>
+		<a href="">Toggle fps Info</a>
+		<a href="">Back to Game</a>
+		<a href="www.github.com/zxlwbi199101" target="_blank">About Author</a>
+	</div>
+	<div id="levelmenu" class="menu">
+		<a href="" class="level">1</a>
+		<a href="" class="level">2</a>
+		<a href="" class="level">3</a>
+		<div style="clear:both;"></div>
+		<a href="" style="clear:both;">Back to MainMenu</a>
+	</div>
+</div>
+
+
+	<script src="js/three.js"></script>
+	<script src="js/Detector.js"></script>
+	<script src="js/Stats.js"></script>
+	<script src="js/OrbitControls.js"></script>
+	<script src="js/THREEx.KeyboardState.js"></script>
+	<script src="js/THREEx.FullScreen.js"></script>
+	<script src="js/THREEx.WindowResize.js"></script>
+
+	<script type="text/javascript">
+	var UNIT_WIDTH = 50;
+
+	function initMenu () {
+		var game = window.Turning.Game,
+			container = document.getElementById( 'menuContainer' ),
+			main = document.getElementById( 'mainmenu' ),
+			levelmenu = document.getElementById( 'levelmenu' ),
+			items = main.getElementsByTagName( 'a' ),
+			levels = levelmenu.getElementsByTagName( 'a' ),
+			i;
+
+		window.mainController = {
+			dom: main,
+			show: function ( delay, callback ) {
+				var self = this;
+				this.animating = true;
+				this.active = true;
+				slideDown( main, delay, function () {
+					self.animating = false;
+					callback && callback();
+				} );
+			},
+			hide: function ( delay, callback ) {
+				var self = this;
+				this.animating = true;
+				this.active = false;
+				slideUp( main, delay, function () {
+					self.animating = false;
+					callback && callback();
+				} );
+			},
+			animating: false,
+			active: false
+		};
+		window.levelController = {
+			dom: levelmenu,
+			show: function ( delay, callback ) {
+				var self = this;
+				this.animating = true;
+				this.active = true;
+				slideDown( levelmenu, delay, function () {
+					game.pause = true;
+					self.animating = false;
+					callback && callback();
+				} );
+			},
+			hide: function ( delay, callback ) {
+				var self = this;
+				this.animating = true;
+				this.active = false;
+				slideUp( levelmenu, delay, function () {
+					self.animating = false;
+					callback && callback();
+				} );
+			},
+			animating: false,
+			active: false
+		};
+		var funcs = [
+			function () {
+				mainController.hide( 0, function () {
+					game.load( 0 );
+					game.pause = false;
+					container.style.display = 'none';
+				} );
+			},
+			function () {
+				mainController.hide( 0 );
+				levelController.show( 300 );
+			},
+			function () {
+				game.showStats( !game.isShowStats );
+			},
+			function () {
+				mainController.hide( 0, function () {
+					game.pause = false;
+					container.style.display = 'none';
+				} );
+			}
+		];
+		for ( i = 0; i < 4; i++ ) {
+			(function ( i ) {
+				items[ i ].onclick = function ( evt ) {
+					if ( mainController.animating || levelController.animating ) return;
+					funcs [ i ].call( this );
+					evt.preventDefault();
+				};
+			})( i );
+		};
+		for ( i = 0; i < levels.length - 1; i++ ) {
+			(function ( i ) {
+				levels[ i ].onclick = function ( evt ) {
+					if ( mainController.animating || levelController.animating ) return;
+					levelController.hide( 0, function () {
+						game.load( i );
+						game.pause = false;
+						container.style.display = 'none';
+					} );
+					evt.preventDefault();
+				};
+			})( i );
+		}
+
+		function slideDown ( dom, delay, callback ) {
+			game.pause = true;
+			container.style.display = 'block';
+			Turning.AnimationObject.animate( 300, function ( per ) {
+				per = Math.pow( per, 0.5 );
+				this.style.bottom = ( 1 - per ) * 100 + '%';
+			}, delay || 0, dom, callback );
+		}
+
+		function slideUp ( dom, delay, callback ) {
+			Turning.AnimationObject.animate( 300, function ( per ) {
+				per = Math.pow( per, 0.5 );
+				this.style.bottom = per * 100 + '%';
+			}, delay || 0, dom, callback );
+		}
+		document.addEventListener( "keydown", function ( evt ) {
+			if ( mainController.animating || levelController.animating ) return;
+
+			if ( evt.keyCode === 27 ) {
+				if ( mainController.active ) {
+					mainController.hide( 0, function () {
+						game.pause = false;
+						container.style.display = 'none';
+					} );
+				} else if ( levelController.active ) {
+					levelController.hide();
+					mainController.show( 300 );
+				} else {
+					mainController.show();
+				}
+			}
+
+		} );
+
+		mainController.show();
+	}
+
+
+window.Turning = {};
+
+	</script>
+	<script src="AnimationObject.js"></script>
+	<script src="brick.js"></script>
+	<script src="tile.js"></script>
+	<script src="game.js"></script>
+
+	<script type="text/javascript">
+		window.Turning.Game.loading();
+	</script>
+
+</body>
+</html>

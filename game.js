@@ -118,7 +118,7 @@ game.prototype.loading = function () {
 	}
 	manager.onProgress = function ( item, loaded, total ) {
 		var percent = ( loaded / total * 100 ).toFixed( 0 );
-		if ( percent ) {
+		if ( percent == '100' ) {
 			document.getElementById( 'loading' ).style.display = 'none';
 		} else {
 			document.getElementById( 'loading' ).innerHTML = 'Loading ' + percent;

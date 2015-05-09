@@ -1,5 +1,12 @@
 (function ( window ) {
 
+if ( !Detector.webgl ) {
+	document.getElementById( 'loading' ).innerHTML = 'Your browser does not support WEBGL...';
+	return;
+} else {
+	document.getElementById( 'loading' ).innerHTML = 'Loading...';
+
+}
 
 window.Turning.resources = {
 	'skybox-xpos': 'images/nebula-xpos.png',
@@ -45,7 +52,37 @@ var level = [
 		'1s11       11e1',
 		'1111       1111',
 		'            111'  ],
-	bridge: [] }
+	bridge: [] },
+	//level 4
+	{ map: [
+		'   2222222    ',
+		'   2222222    ',
+		'1111     111  ',
+		'111       11  ',
+		'111       11  ',
+		'1s1  111122222',
+		'111  111122222',
+		'     1e1  2212',
+		'     111  2222'  ],
+	bridge: [] },
+	//level 5
+	{ map: [
+		'           1111',
+		' 1111xx1a1111s1',
+		' 1111       111',
+		' 11a1          ',
+		' 1111          ',
+		'   111a111111  ',
+		'          1111a',
+		'111       11111',
+		'1e111xx111111  ',
+		'111            ' ],
+	bridge: [
+		{ 'switch': [ 8, 1 ], 'tiles': [ [ 5, 1 ], [ 6, 1 ] ], 'on': true, 'type': 'normal' },
+		{ 'switch': [ 3, 3 ], 'tiles': [ [ 5, 8 ], [ 6, 8 ] ], 'on': true, 'type': 'mormal' },
+		{ 'switch': [ 6, 5 ], 'tiles': [ [ 5, 8 ], [ 6, 8 ] ], 'on': false, 'type': 'mormal' },
+		{ 'switch': [ 14, 6 ], 'tiles': [ [ 5, 8 ], [ 6, 8 ] ], 'on': false, 'type': 'mormal' }
+	] }
 ];
 
 var game = function () {
@@ -80,7 +117,12 @@ game.prototype.loading = function () {
 		})( k ) );
 	}
 	manager.onProgress = function ( item, loaded, total ) {
-		//console.log(item, loaded, total);
+		var percent = ( loaded / total * 100 ).toFixed( 0 );
+		if ( percent ) {
+			document.getElementById( 'loading' ).style.display = 'none';
+		} else {
+			document.getElementById( 'loading' ).innerHTML = 'Loading ' + percent;
+		}
 	};
 	manager.onLoad = function () {
 		self.initScene();
@@ -121,7 +163,7 @@ game.prototype.initScene = function () {
 		materialArray[i].side = THREE.BackSide;
 	}
 	var skyboxMaterial = new THREE.MeshFaceMaterial( materialArray );
-	var skyboxGeom = new THREE.CubeGeometry( 5000, 5000, 5000, 1, 1, 1 );
+	var skyboxGeom = new THREE.BoxGeometry( 5000, 5000, 5000, 1, 1, 1 );
 	var skybox = new THREE.Mesh( skyboxGeom, skyboxMaterial );
 	scene.add( skybox );
 
@@ -181,8 +223,10 @@ game.prototype.check = function( pos ) {
 		tiles = this.currentTiles,
 		x, y, word;
 	while ( len-- ) {
-		x = pos[ len ][ 0 ], y = pos[ len ][ 1 ], word = map[ y ].charAt( x );
-		if ( x < 0 || y < 0 || word === ' ' || ( word === 'x' && !tiles[ y ][ x ].active ) ) {
+		x = pos[ len ][ 0 ], y = pos[ len ][ 1 ];
+		if ( x < 0 || y < 0 || y >= map.length || x >= map[ 0 ].length ||
+			( word = map[ y ].charAt( x ) ) === ' ' ||
+			( word === 'x' && !tiles[ y ][ x ].active ) ) {
 			return this.lose();
 		}
 		if ( word === 'a' ) {
@@ -213,6 +257,7 @@ var tileCacheTuple = {
 game.prototype.load = function( num ) {
 	this.currentLevel = num || 0;
 	this.currentTiles = [];
+	var self = this;
 
 	var map = level[ this.currentLevel ].map,
 		bridge = level[ this.currentLevel ].bridge,
@@ -268,7 +313,11 @@ game.prototype.load = function( num ) {
 				this.currentTiles[ bz ][ bx ] );
 		}
 		if ( bridge[ i ].on ) {
-			this.currentTiles[ switchz ][ switchx ].trigger();
+			(function ( switchx, switchz ) {
+				setTimeout ( function () {
+					self.currentTiles[ switchz ][ switchx ].trigger();
+				}, 2000 );
+			})( switchx, switchz );
 		}
 	}
 
@@ -278,15 +327,16 @@ game.prototype.load = function( num ) {
 game.prototype.prompt = function ( text ) {
 	var dom = document.getElementById( 'prompt' );
 	dom.innerHTML = text;
-	Turning.AnimationObject.animate( 1000, function ( per ) {
-		per = Math.pow( per, 0.3 );
-		dom.style.left = ( 1 - per ) * 100 + '%';
-	} );
+	Turning.AnimationObject.animate( 2000, function ( per ) {
+		if ( per < 0.5 ) {
+			per = Math.pow( per * 2, 0.3 );
+			dom.style.left = ( 1 - per ) * 100 + '%';
+		} else {
+			per = Math.pow( ( per - 0.5 ) * 2, 3 );
+			dom.style.left = -per * 100 + '%';
+		}
 
-	Turning.AnimationObject.animate( 1000, function ( per ) {
-		per = Math.pow( per, 0.3 );
-		dom.style.left = -per * 100 + '%';
-	}, 1000 );
+	}, 0 );
 };
 game.prototype.win = function () {
 	var tileLen = this.currentTiles.length,

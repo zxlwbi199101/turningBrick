@@ -7,7 +7,7 @@ var tile = window.Turning.Tile = function ( scene ) {
 	var floorTexture = Turning.resources[ 'tile-normal' ];
 	// var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, color: 0x55ff55, wrapAround: true } );
 	var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture } );
-	var floorGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
+	var floorGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
 	this.obj3d = new THREE.Mesh(floorGeometry, floorMaterial);
 	this.obj3d.position.y = -3000;
 	scene.add( this.obj3d );
@@ -44,7 +44,7 @@ var tile = window.Turning.WeakTile = function ( scene ) {
 
 	var floorTexture = Turning.resources[ 'tile-normal' ];
 	var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, color: 0x55ff55, wrapAround: true } );
-	var floorGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
+	var floorGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
 	this.obj3d = new THREE.Mesh(floorGeometry, floorMaterial);
 	this.obj3d.position.y = -3000;
 	scene.add( this.obj3d );
@@ -64,7 +64,7 @@ var tile = window.Turning.Switch1Tile = function ( scene ) {
 
 	var floorTexture = Turning.resources[ 'tile-switch1' ];
 	var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture } );
-	var floorGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
+	var floorGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
 	this.obj3d = new THREE.Mesh(floorGeometry, floorMaterial);
 	this.obj3d.position.y = -3000;
 	scene.add( this.obj3d );
@@ -84,6 +84,15 @@ tile.prototype.trigger = function () {
 
 		( b.active ? b.hide : b.display ).call( b );
 	}
+};
+
+tile.prototype.refresh = function ( x, z, delay ) {
+	this.obj3d.position.x = x;
+	this.obj3d.position.z = z;
+	this.appear( delay );
+
+	this.relatedBridges = [];
+	this.triggered = false;
 };
 
 })();
@@ -96,7 +105,7 @@ var tile = window.Turning.Switch2Tile = function ( scene ) {
 
 	var floorTexture = Turning.resources[ 'tile-switch2' ];
 	var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture } );
-	var floorGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
+	var floorGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
 	this.obj3d = new THREE.Mesh(floorGeometry, floorMaterial);
 	this.obj3d.position.y = -3000;
 	scene.add( this.obj3d );
@@ -117,6 +126,14 @@ tile.prototype.trigger = function () {
 		( b.active ? b.hide : b.display ).call( b );
 	}
 };
+tile.prototype.refresh = function ( x, z, delay ) {
+	this.obj3d.position.x = x;
+	this.obj3d.position.z = z;
+	this.appear( delay );
+
+	this.relatedBridges = [];
+	this.triggered = false;
+};
 })();
 
 
@@ -127,7 +144,7 @@ var tile = window.Turning.BridgeTile = function ( scene ) {
 
 	var floorTexture = Turning.resources[ 'tile-bridge' ];
 	var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture } );
-	var floorGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
+	var floorGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 8, UNIT_WIDTH );
 	this.obj3d = new THREE.Mesh(floorGeometry, floorMaterial);
 	this.obj3d.position.y = -3000;
 	scene.add( this.obj3d );
@@ -149,6 +166,8 @@ tile.prototype.hide = function () {
 tile.prototype.refresh = function ( x, z, delay ) {
 	this.obj3d.position.x = x;
 	this.obj3d.position.z = z;
+	this.obj3d.position.y = -3000;
+	this.active = false;
 };
 })();
 

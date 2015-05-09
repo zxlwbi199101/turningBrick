@@ -45,11 +45,22 @@
 			font-size: 50px;
 			color: rgb(227, 200, 0);
 		}
+		#loading {
+			position: fixed;
+			text-align: center;
+			width: 100%;
+			height: 150px;
+			left: 0;
+			top: 30%;
+			font-size: 50px;
+			color: black;
+		}
 	</style>
 </head>
 <body>
 
-<div id="prompt" style="p">LEVEL 1</div>
+<div id="loading">Detecting...</div>
+<div id="prompt">LEVEL 1</div>
 <div id="menuContainer" style="">
 	<div id="mainmenu" class="menu">
 		<a href="">Start New Game</a>
@@ -62,6 +73,8 @@
 		<a href="" class="level">1</a>
 		<a href="" class="level">2</a>
 		<a href="" class="level">3</a>
+		<a href="" class="level">4</a>
+		<a href="" class="level">5</a>
 		<div style="clear:both;"></div>
 		<a href="" style="clear:both;">Back to MainMenu</a>
 	</div>
@@ -77,6 +90,7 @@
 	<script src="js/THREEx.WindowResize.js"></script>
 
 	<script type="text/javascript">
+
 	var UNIT_WIDTH = 50;
 
 	function initMenu () {

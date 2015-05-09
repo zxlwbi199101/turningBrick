@@ -3,7 +3,7 @@
 
 var brick = window.Turning.Brick = function ( scene ) {
 
-	var cubeGeometry = new THREE.CubeGeometry( UNIT_WIDTH, 2 * UNIT_WIDTH, UNIT_WIDTH );
+	var cubeGeometry = new THREE.BoxGeometry( UNIT_WIDTH, 2 * UNIT_WIDTH, UNIT_WIDTH );
 	var moonTexture = Turning.resources[ 'brick' ];
 	var moonMaterial = new THREE.MeshLambertMaterial( { map: moonTexture } );
 	// var moonMaterial = new THREE.MeshLambertMaterial( { map: moonTexture, color: 0xff4499, ambient: 0x0000ff } );

@@ -9,12 +9,12 @@ if ( !Detector.webgl ) {
 }
 
 window.Turning.resources = {
-	'skybox-xpos': 'images/nebula-xpos.png',
-	'skybox-xneg': 'images/nebula-xneg.png',
-	'skybox-ypos': 'images/nebula-ypos.png',
-	'skybox-yneg': 'images/nebula-yneg.png',
-	'skybox-zpos': 'images/nebula-zpos.png',
-	'skybox-zneg': 'images/nebula-zneg.png',
+	'skybox-xpos': 'images/nebula-xpos.jpg',
+	'skybox-xneg': 'images/nebula-xneg.jpg',
+	'skybox-ypos': 'images/nebula-ypos.jpg',
+	'skybox-yneg': 'images/nebula-yneg.jpg',
+	'skybox-zpos': 'images/nebula-zpos.jpg',
+	'skybox-zneg': 'images/nebula-zneg.jpg',
 	'brick': 'images/86.jpg',
 	'tile-normal': 'images/tile.jpg',
 	'tile-switch1': 'images/switch1.jpg',
@@ -121,7 +121,7 @@ game.prototype.loading = function () {
 		if ( percent == '100' ) {
 			document.getElementById( 'loading' ).style.display = 'none';
 		} else {
-			document.getElementById( 'loading' ).innerHTML = 'Loading ' + percent;
+			document.getElementById( 'loading' ).innerHTML = 'Loading ' + percent + '%';
 		}
 	};
 	manager.onLoad = function () {
